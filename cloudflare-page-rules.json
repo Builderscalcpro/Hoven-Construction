@@ -1,0 +1,138 @@
+{
+  "page_rules": [
+    {
+      "priority": 1,
+      "pattern": "*.yourdomain.com/api/*",
+      "actions": {
+        "cache_level": "bypass",
+        "security_level": "high",
+        "ssl": "full_strict",
+        "always_online": "off",
+        "disable_performance": true
+      }
+    },
+    {
+      "priority": 2,
+      "pattern": "*.yourdomain.com/admin/*",
+      "actions": {
+        "cache_level": "bypass",
+        "security_level": "under_attack",
+        "browser_check": "on",
+        "challenge_passage": 30,
+        "disable_apps": true
+      }
+    },
+    {
+      "priority": 3,
+      "pattern": "*.yourdomain.com/supabase/*",
+      "actions": {
+        "cache_level": "bypass",
+        "ssl": "full_strict",
+        "always_online": "off"
+      }
+    },
+    {
+      "priority": 4,
+      "pattern": "*.yourdomain.com/images/*",
+      "actions": {
+        "cache_level": "cache_everything",
+        "edge_cache_ttl": 31536000,
+        "browser_cache_ttl": 31536000,
+        "polish": "lossless",
+        "mirage": "on"
+      }
+    },
+    {
+      "priority": 5,
+      "pattern": "*.yourdomain.com/*.css",
+      "actions": {
+        "cache_level": "cache_everything",
+        "edge_cache_ttl": 86400,
+        "browser_cache_ttl": 86400,
+        "minify": {
+          "css": true
+        }
+      }
+    },
+    {
+      "priority": 6,
+      "pattern": "*.yourdomain.com/*.js",
+      "actions": {
+        "cache_level": "cache_everything",
+        "edge_cache_ttl": 86400,
+        "browser_cache_ttl": 86400,
+        "minify": {
+          "javascript": true
+        },
+        "rocket_loader": "on"
+      }
+    },
+    {
+      "priority": 7,
+      "pattern": "*.yourdomain.com/*",
+      "actions": {
+        "cache_level": "standard",
+        "edge_cache_ttl": 7200,
+        "browser_cache_ttl": 14400,
+        "always_use_https": true,
+        "automatic_https_rewrites": "on"
+      }
+    }
+  ],
+  "firewall_rules": [
+    {
+      "name": "Block Bad Bots",
+      "expression": "(cf.client.bot and not cf.verified_bot)",
+      "action": "block"
+    },
+    {
+      "name": "Challenge High-Risk Countries",
+      "expression": "(ip.geoip.country in {\"CN\" \"RU\" \"KP\" \"IR\"})",
+      "action": "challenge"
+    },
+    {
+      "name": "Rate Limit API",
+      "expression": "(http.request.uri.path contains \"/api/\")",
+      "action": "rate_limit",
+      "rate_limit": {
+        "requests_per_period": 100,
+        "period": 60,
+        "mitigation_action": "challenge"
+      }
+    },
+    {
+      "name": "Block SQL Injection Attempts",
+      "expression": "(http.request.uri.query contains \"union\" and http.request.uri.query contains \"select\") or (http.request.uri.query contains \"';\" or http.request.uri.query contains '\")')",
+      "action": "block"
+    },
+    {
+      "name": "Protect Admin Area",
+      "expression": "(http.request.uri.path contains \"/admin\" and not ip.src in {your_office_ip})",
+      "action": "challenge"
+    }
+  ],
+  "transform_rules": [
+    {
+      "name": "Add Security Headers",
+      "phase": "response_headers",
+      "expression": "true",
+      "actions": [
+        {
+          "type": "set_header",
+          "name": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "type": "set_header",
+          "name": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "type": "set_header",
+          "name": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}

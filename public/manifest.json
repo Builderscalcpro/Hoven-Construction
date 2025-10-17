@@ -1,0 +1,38 @@
+{
+  "name": "Construction Management Pro",
+  "short_name": "ConstructPro",
+  "description": "Professional construction project management and client portal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://d64gsuwffb70l.cloudfront.net/68deb4266cd629b01658472d_1759972884936_ccd7b378.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://d64gsuwffb70l.cloudfront.net/68deb4266cd629b01658472d_1759972884936_ccd7b378.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/dashboard",
+      "description": "View your dashboard"
+    },
+    {
+      "name": "New Project",
+      "url": "/project-management",
+      "description": "Create a new project"
+    }
+  ]
+}

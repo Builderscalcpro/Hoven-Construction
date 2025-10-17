@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chatbot Test - Standalone</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+    #chat-result { padding: 16px; border: 1px solid #ddd; border-radius: 8px; margin: 16px 0; min-height: 100px; background: #f9f9f9; }
+    input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; margin: 12px 0; }
+    button { background: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #9ca3af; cursor: not-allowed; }
+    .success { border-color: #10b981; background: #ecfdf5; }
+    .error { border-color: #ef4444; background: #fef2f2; }
+    code { background: #e5e7eb; padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>🤖 AI Chatbot Test (Standalone)</h1>
+  <p>Test the ai-chatbot edge function directly from any domain.</p>
+  
+  <input type="text" id="message-input" placeholder="Type your message..." value="Hello, can you help me?">
+  <button id="test-btn" onclick="testChatbot()">Send Message</button>
+  
+  <div id="chat-result">Ready to test...</div>
+
+  <h3>Configuration</h3>
+  <p>Function URL: <code id="function-url">https://qdxondojktchkjbbrtaq.supabase.co/functions/v1/ai-chatbot</code></p>
+
+  <script>
+    async function testChatbot() {
+      const out = document.getElementById("chat-result");
+      const btn = document.getElementById("test-btn");
+      const input = document.getElementById("message-input");
+      const message = input.value.trim();
+
+      if (!message) {
+        out.textContent = "Please enter a message";
+        out.className = "error";
+        return;
+      }
+
+      out.textContent = "Sending message...";
+      out.className = "";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch("https://qdxondojktchkjbbrtaq.supabase.co/functions/v1/ai-chatbot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            message: message,
+            conversationHistory: [],
+            temperature: 0.7,
+            maxTokens: 1024
+          })
+        });
+
+        const data = await res.json();
+        
+        if (res.ok) {
+          out.innerHTML = `<strong>✅ Success (${res.status})</strong><br><br><strong>AI Response:</strong><br>${data.message}`;
+          out.className = "success";
+        } else {
+          out.innerHTML = `<strong>❌ Error (${res.status})</strong><br><br>${JSON.stringify(data, null, 2)}`;
+          out.className = "error";
+        }
+      } catch (e) {
+        out.innerHTML = `<strong>❌ Network Error</strong><br><br>${e.message}`;
+        out.className = "error";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Allow Enter key to send
+    document.getElementById("message-input").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") testChatbot();
+    });
+  </script>
+</body>
+</html>

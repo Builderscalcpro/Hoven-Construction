@@ -1,0 +1,50 @@
+codecov:
+  require_ci_to_pass: true
+  
+coverage:
+  precision: 2
+  round: down
+  range: "80...100"
+  
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 1%
+        base: auto
+        flags:
+          - unittests
+        paths:
+          - "src"
+          
+    patch:
+      default:
+        target: 80%
+        threshold: 1%
+        base: auto
+        
+parsers:
+  gcov:
+    branch_detection:
+      conditional: true
+      loop: true
+      method: false
+      macro: false
+      
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+  
+ignore:
+  - "**/*.test.tsx"
+  - "**/*.test.ts"
+  - "**/*.spec.tsx"
+  - "**/*.spec.ts"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/node_modules/**"
+  - "src/main.tsx"
+  - "**/*.config.ts"
+  - "**/*.config.js"
